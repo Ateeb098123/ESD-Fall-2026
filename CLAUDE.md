@@ -10,7 +10,7 @@ This repo holds the course-design agent system for this course. Claude Code load
 - **Format:** 16 weeks, two 75-minute sessions/week, in person
 - **Structure:** 4 modules — (1) Architecture & Design, (2) DevOps, (3) Data Systems, (4) Scalable Systems Synthesis
 - **This term's theme:** Visualization — every concept taught should be demonstrated through a deep, accurate, parameter-explorable visualization or simulation wherever the concept warrants it. This is not yet reflected in the syllabus itself (see audit).
-- **Source syllabus:** see `docs/source/` (add the syllabus file here once finalized, so agents can reference it directly instead of you re-pasting it each session)
+- **Source syllabus:** `docs/source/syllabus.md` — markdown, converted from `Revised_Syllabus.pdf`, now the source of truth. Edit the markdown, not the PDF.
 
 ## The agent system
 Five subagents in `.claude/agents/`, meant to be used in this order — see `docs/00-ORCHESTRATION-GUIDE.md` for the full pipeline diagram and rationale:
@@ -32,7 +32,8 @@ Keep this updated as ambiguities from audits get resolved — this is what stops
 
 | Date | Decision | Context |
 |---|---|---|
-| — | *(none yet)* | Open items pending from the first syllabus audit: (1) one exam or midterm+final split, (2) Case Study Viva scope — one case study or all three, (3) whether breadth-over-depth is a fixed constraint or negotiable this term. See `docs/audits/week0-syllabus-audit.md`. |
+| 2026-08-19 | Grading redesigned for AI era: Assignments 55%→40% (6→5, same per-assignment timeframe, more depth), Weekly Quizzes 15%→10% (10→6), new Midterm Exam 20% added, Final held at 25%, Case Study Viva unchanged at 5%. Resolves audit §2.1 (midterm/final contradiction) — the course now genuinely has both a midterm and a final. | Instructor-driven redesign; take-home assignments were 55% of grade pre-redesign, judged too gameable by AI. See `docs/source/syllabus.md` Assessments table. |
+| — | *(open)* | Still open from the first syllabus audit: (1) which of the 6 named assignment deliverables (Domain Entity Mapping, SDK Generation from API Spec, Github Actions Pipeline, Docker Image Creation, Replicated RDBMS, Report) to cut/merge now that assignment count is 5, (2) specific assignment grading method (defense/viva component etc. — deferred by instructor), (3) Case Study Viva scope — one case study or all three, (4) whether breadth-over-depth is a fixed constraint or negotiable this term. See `docs/audits/week0-syllabus-audit.md`. |
 
 ## Reference material
 - `docs/00-ORCHESTRATION-GUIDE.md` — full pipeline explanation and setup instructions
