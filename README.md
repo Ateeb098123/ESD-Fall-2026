@@ -27,13 +27,17 @@ Then on any other machine: `git clone <your-repo-url>`, `cd` in, run `claude`. S
 
 ```
 CLAUDE.md                    ← auto-loaded every session; course facts, principles, decisions log
-.claude/agents/               ← the five subagents (auto-loaded, invoke by name)
+.claude/agents/               ← the six subagents (auto-loaded, invoke by name)
 docs/00-ORCHESTRATION-GUIDE.md ← full pipeline explanation
+docs/PROJECT-CONTEXT.md        ← authority map, validated facts, and change checklist
 docs/audits/                  ← course-auditor reports
 docs/source/                  ← put the syllabus and other source docs here
 docs/topic-briefs/            ← topic-explorer outputs (create as produced)
 docs/lectures/                ← content-architect outputs (create as produced)
 docs/simulations/             ← simulation-architect outputs (create as produced)
+docs/masterclass/             ← deep reference chapters
+docs/specs/                   ← canonical technical specifications
+labs/                         ← executable teaching labs
 ```
 
 ## Using it day to day

@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 1s
+  evaluation_interval: 1s
+
+scrape_configs:
+  - job_name: 'api-gateway'
+    static_configs:
+      - targets: ['api-gateway:8080']
+
+  - job_name: 'inventory-service'
+    static_configs:
+      - targets: ['inventory-service:8081']
+
+  - job_name: 'payment-service'
+    static_configs:
+      - targets: ['payment-service:8082']

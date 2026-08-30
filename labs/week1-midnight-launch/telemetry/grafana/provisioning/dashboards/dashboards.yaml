@@ -1,0 +1,13 @@
+apiVersion: 1
+
+providers:
+  - name: 'SRE War Room Dashboards'
+    orgId: 1
+    folder: ''
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      # Must be a DIRECTORY that Grafana scans for dashboard JSON, and it must
+      # not sit inside the provisioning tree it is declared from.
+      path: /var/lib/grafana/dashboards

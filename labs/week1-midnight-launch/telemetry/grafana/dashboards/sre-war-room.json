@@ -1,0 +1,247 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 0 },
+      "id": 1,
+      "title": "API Gateway — Incoming Request Rate (RED: Rate)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum(rate(http_requests_total{job=\"api-gateway\"}[15s]))",
+          "legendFormat": "Total Incoming RPS",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 0 },
+      "id": 2,
+      "title": "API Gateway — Error Rate (RED: Errors)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100 }, "overrides": [] },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum(rate(http_requests_total{job=\"api-gateway\", status=~\"5..|429\"}[15s])) / clamp_min(sum(rate(http_requests_total{job=\"api-gateway\"}[15s])), 0.001) * 100",
+          "legendFormat": "Error Rate %",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 0 },
+      "id": 3,
+      "title": "API Gateway — Latency Percentiles (RED: Duration)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "ms" }, "overrides": [] },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket{job=\"api-gateway\"}[30s])) by (le)) * 1000",
+          "legendFormat": "P50 Latency (ms)",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{job=\"api-gateway\"}[30s])) by (le)) * 1000",
+          "legendFormat": "P99 Latency (ms)",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 8 },
+      "id": 4,
+      "title": "Postgres — DB Connection Pool Saturation (USE: Saturation)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "postgres_connection_pool_waiters",
+          "legendFormat": "Row-Lock Pool Waiters",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 8 },
+      "id": 5,
+      "title": "API Gateway — Circuit Breaker State",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "type": "value", "options": {
+              "0": { "text": "CLOSED", "color": "green", "index": 0 },
+              "1": { "text": "OPEN", "color": "red", "index": 1 },
+              "2": { "text": "HALF-OPEN", "color": "orange", "index": 2 }
+            } }
+          ]
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "circuit_breaker_state",
+          "legendFormat": "Breaker State",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 8 },
+      "id": 6,
+      "title": "TSDB — Active Time-Series Cardinality Count",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "tsdb_cardinality_series_count",
+          "legendFormat": "Active Series in Memory",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "id": 7,
+      "title": "Little's Law — In-Flight Concurrency (L = λW)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "gateway_active_workers",
+          "legendFormat": "Active Workers (observed L)",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum(rate(http_requests_total{job=\"api-gateway\"}[30s])) * histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket{job=\"api-gateway\"}[30s])) by (le))",
+          "legendFormat": "Predicted L = λ × W(p50)",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "id": 8,
+      "title": "Tail Latency Amplification — Observed vs 1-(1-p)^N",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "percentunit", "min": 0, "max": 1 }, "overrides": [] },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum(rate(gateway_fanout_slow_total[30s])) / clamp_min(sum(rate(gateway_fanout_requests_total[30s])), 0.001)",
+          "legendFormat": "Observed P(request slow)",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "1 - (0.99 ^ gateway_fanout_dependencies)",
+          "legendFormat": "Predicted 1-(1-p)^N  @ p=0.01",
+          "refId": "B"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "gateway_fanout_dependencies / 100",
+          "legendFormat": "Fan-out N (÷100)",
+          "refId": "C"
+        }
+      ]
+    },
+    {
+      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 24 },
+      "id": 9,
+      "title": "Service Instances — Up / Down",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "mappings": [{ "type": "value", "options": { "0": { "text": "DOWN", "color": "red", "index": 0 }, "1": { "text": "UP", "color": "green", "index": 1 } } }], "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] } }, "overrides": [] },
+      "options": { "colorMode": "background", "graphMode": "none", "reduceOptions": { "calcs": ["lastNotNull"], "values": false } },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "up{job=~\"api-gateway|inventory-service|payment-service\"}", "legendFormat": "{{job}}", "refId": "A" }]
+    },
+    {
+      "gridPos": { "h": 8, "w": 9, "x": 6, "y": 24 },
+      "id": 10,
+      "title": "Incoming Throughput — Per Route and Status",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum by (method, route, status) (rate(http_requests_total{job=\"api-gateway\"}[15s]))", "legendFormat": "{{method}} {{route}} · {{status}}", "refId": "A" }]
+    },
+    {
+      "gridPos": { "h": 8, "w": 9, "x": 15, "y": 24 },
+      "id": 11,
+      "title": "Incoming 4XX / 5XX — Per Route",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum by (route, status) (rate(http_requests_total{job=\"api-gateway\",status=~\"4..|5..\"}[15s]))", "legendFormat": "{{status}} · {{route}}", "refId": "A" }]
+    },
+    {
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 32 },
+      "id": 12,
+      "title": "Outgoing Requests — Throughput",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum by (dependency, method, route, status) (rate(http_client_requests_total[15s]))", "legendFormat": "{{dependency}} · {{method}} {{route}} · {{status}}", "refId": "A" }]
+    },
+    {
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 32 },
+      "id": 13,
+      "title": "Outgoing Requests — Failures",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum by (dependency, route, status) (rate(http_client_requests_total{status=~\"4..|5..|transport_error\"}[15s]))", "legendFormat": "{{dependency}} · {{status}} · {{route}}", "refId": "A" }]
+    },
+    {
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 32 },
+      "id": 14,
+      "title": "Outgoing Requests — P99 Latency",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "ms" }, "overrides": [] },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "histogram_quantile(0.99, sum by (le, dependency, route) (rate(http_client_request_duration_seconds_bucket[30s]))) * 1000", "legendFormat": "{{dependency}} · {{route}} · p99", "refId": "A" }]
+    },
+    {
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 40 },
+      "id": 15,
+      "title": "Runtime — CPU Usage by Service",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "cores" }, "overrides": [] },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum by (job) (rate(process_cpu_seconds_total{job=~\"api-gateway|inventory-service|payment-service\"}[30s]))", "legendFormat": "{{job}}", "refId": "A" }]
+    },
+    {
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 40 },
+      "id": 16,
+      "title": "Runtime — Resident Memory by Service",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "process_resident_memory_bytes{job=~\"api-gateway|inventory-service|payment-service\"}", "legendFormat": "{{job}}", "refId": "A" }]
+    }
+  ],
+  "refresh": "1s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["sre", "observability", "game-day"],
+  "time": { "from": "now-5m", "to": "now" },
+  "title": "Midnight Launch — SRE War Room Dashboard",
+  "uid": "sre-war-room"
+}

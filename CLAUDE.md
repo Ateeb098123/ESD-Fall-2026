@@ -13,13 +13,14 @@ This repo holds the course-design agent system for this course. Claude Code load
 - **Source syllabus:** `docs/source/syllabus.md` — markdown, converted from `Revised_Syllabus.pdf`, now the source of truth. Edit the markdown, not the PDF.
 
 ## The agent system
-Five subagents in `.claude/agents/`, meant to be used in this order — see `docs/00-ORCHESTRATION-GUIDE.md` for the full pipeline diagram and rationale:
+Six subagents in `.claude/agents/`, meant to be used in this order — see `docs/00-ORCHESTRATION-GUIDE.md` for the full pipeline diagram and rationale:
 
 1. `course-auditor` — evaluates the course holistically, produces a priority topic queue
 2. `topic-explorer` — deep-dives one topic at a time from that queue
 3. `content-architect` — turns approved topic briefs into lecture material
 4. `simulation-architect` — builds the deep interactive simulations, working with #3
 5. `systems-architect` — only once you want an actual platform/tool built from all of the above
+6. `masterclass-author` — turns an already-developed topic and its validated artifacts into a deep reference chapter and instructor manual
 
 You are the router between them — none of these agents call each other automatically.
 
@@ -36,8 +37,12 @@ Keep this updated as ambiguities from audits get resolved — this is what stops
 | — | *(open)* | Still open from the first syllabus audit: (1) which of the 6 named assignment deliverables (Domain Entity Mapping, SDK Generation from API Spec, Github Actions Pipeline, Docker Image Creation, Replicated RDBMS, Report) to cut/merge now that assignment count is 5, (2) specific assignment grading method (defense/viva component etc. — deferred by instructor), (3) Case Study Viva scope — one case study or all three, (4) whether breadth-over-depth is a fixed constraint or negotiable this term. See `docs/audits/week0-syllabus-audit.md`. |
 
 ## Reference material
+- `docs/PROJECT-CONTEXT.md` — repository map, source-of-truth hierarchy, Week 1 validated facts, and change checklist
 - `docs/00-ORCHESTRATION-GUIDE.md` — full pipeline explanation and setup instructions
 - `docs/audits/` — course-auditor reports, one per audit pass
 - `docs/topic-briefs/` — topic-explorer outputs (create as they're produced)
 - `docs/lectures/` — content-architect outputs (create as they're produced)
 - `docs/simulations/` — simulation-architect build artifacts (create as they're produced)
+- `docs/masterclass/` — masterclass-author reference chapters
+- `docs/specs/` — canonical technical specifications
+- `labs/` — executable teaching labs and their student runbooks

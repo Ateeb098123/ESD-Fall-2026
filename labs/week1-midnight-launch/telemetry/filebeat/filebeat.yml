@@ -1,0 +1,36 @@
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      host: unix:///var/run/docker.sock
+      hints.enabled: true
+      hints.default_config.enabled: false
+      hints.default_config:
+        type: filestream
+        id: container-${data.container.id}
+        prospector.scanner.symlinks: true
+        parsers:
+          - container:
+              stream: all
+              format: docker
+        paths:
+          - /var/lib/docker/containers/${data.container.id}/*.log
+        processors:
+          - decode_json_fields:
+              fields: ["message"]
+              target: ""
+              overwrite_keys: true
+              add_error_key: true
+
+processors:
+  - add_docker_metadata:
+      host: unix:///var/run/docker.sock
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+  index: "midnight-launch-logs-%{+yyyy.MM.dd}"
+
+setup.ilm.enabled: false
+setup.template.name: "midnight-launch-logs"
+setup.template.pattern: "midnight-launch-logs-*"
+
+logging.level: warning
